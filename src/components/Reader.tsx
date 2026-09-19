@@ -1,4 +1,4 @@
-import { Fragment, MutableRefObject, UIEvent, memo } from "react";
+import { Fragment, HTMLAttributes, MutableRefObject, UIEvent, memo } from "react";
 import type { Deck } from "../types";
 import { BAND_FRACTION, BAND_HEIGHT_FRACTION } from "../hooks/useSlideBounds";
 import { parseHoldSeconds, splitStageDirections } from "../utils/stageDirections";
@@ -39,6 +39,8 @@ interface ReaderProps {
   fontSize: number;
   mirrored: boolean;
   activeIndex: number;
+  /** Handlers that let the reader be dragged or wheeled to move through a timed run. */
+  seekHandlers?: HTMLAttributes<HTMLDivElement>;
 }
 
 export function Reader({
@@ -50,9 +52,13 @@ export function Reader({
   fontSize,
   mirrored,
   activeIndex,
+  seekHandlers,
 }: ReaderProps) {
   return (
-    <div className="reader-viewport">
+    <div
+      className={"reader-viewport" + (seekHandlers ? " reader-viewport-seekable" : "")}
+      {...seekHandlers}
+    >
       <div
         className="reader-scroll"
         ref={containerRef}

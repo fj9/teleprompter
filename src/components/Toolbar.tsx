@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { useSettings } from "../settingsContext";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface ToolbarProps {
   slideLabel: string;
@@ -35,6 +36,7 @@ export function Toolbar({ slideLabel, onRestart, onExit, children }: ToolbarProp
         <button className="btn" onClick={toggleMirrored} aria-pressed={mirrored}>
           {mirrored ? "Unmirror" : "Mirror"}
         </button>
+        <ThemeToggle />
       </div>
     </div>
   );

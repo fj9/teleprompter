@@ -1,4 +1,5 @@
-:root {
+:root,
+:root[data-theme="dark"] {
   --bg: #0b0d10;
   --bg-raised: #14171c;
   --bg-raised-2: #1c2027;
@@ -13,8 +14,40 @@
   --info: #60a5fa;
   --info-dim: #132741;
   --danger: #f87171;
+  --on-accent: #05231f;
+  --warn-text: #ffd699;
+  --warn-border: #5a3f13;
+  --info-text: #bcd9ff;
+  --info-border: #234a7a;
+  --band-line: rgba(94, 234, 212, 0.35);
+  --band-fill: rgba(94, 234, 212, 0.04);
   --radius: 10px;
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f6f7f9;
+  --bg-raised: #ffffff;
+  --bg-raised-2: #eceef2;
+  --border: #d3d8e0;
+  --text: #14171c;
+  --text-dim: #566070;
+  --text-faint: #858e9b;
+  --accent: #0f766e;
+  --accent-dim: #d5f0ec;
+  --warn: #b45309;
+  --warn-dim: #fdebc8;
+  --info: #1d4ed8;
+  --info-dim: #dce8ff;
+  --danger: #dc2626;
+  --on-accent: #ffffff;
+  --warn-text: #7c4306;
+  --warn-border: #efc98a;
+  --info-text: #1e3a8a;
+  --info-border: #aac4f5;
+  --band-line: rgba(15, 118, 110, 0.5);
+  --band-fill: rgba(15, 118, 110, 0.07);
+  color-scheme: light;
 }
 
 * {
@@ -42,10 +75,12 @@ button {
   background: var(--bg-raised-2);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 14px;
+  border-radius: 10px;
+  padding: 10px 20px;
+  min-height: 48px;
+  font-size: 16px;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .btn:hover {
@@ -59,7 +94,7 @@ button {
 
 .btn-primary {
   background: var(--accent);
-  color: #05231f;
+  color: var(--on-accent);
   border-color: var(--accent);
   font-weight: 600;
 }
@@ -73,9 +108,24 @@ button {
   border: none;
   color: var(--accent);
   cursor: pointer;
-  font-size: 14px;
-  padding: 0;
+  font-size: 16px;
+  padding: 12px 4px;
+  min-height: 48px;
   text-decoration: underline;
+}
+
+.btn-large {
+  min-width: 104px;
+  min-height: 60px;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.theme-toggle-floating {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  z-index: 10;
 }
 
 /* ---------- Generic screen layout ---------- */
@@ -83,7 +133,7 @@ button {
 .screen {
   max-width: 860px;
   margin: 0 auto;
-  padding: 48px 24px 80px;
+  padding: 72px 24px 80px;
 }
 
 .screen h1 {
@@ -127,7 +177,7 @@ button {
 
 .paste-fallback summary {
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .paste-fallback textarea {
@@ -139,7 +189,7 @@ button {
   border-radius: 8px;
   padding: 10px;
   font-family: ui-monospace, Menlo, monospace;
-  font-size: 13px;
+  font-size: 16px;
   resize: vertical;
 }
 
@@ -172,14 +222,14 @@ button {
 
 .warning-box-dropped {
   background: var(--warn-dim);
-  color: #ffd699;
-  border: 1px solid #5a3f13;
+  color: var(--warn-text);
+  border: 1px solid var(--warn-border);
 }
 
 .warning-box-flagged {
   background: var(--info-dim);
-  color: #bcd9ff;
-  border: 1px solid #234a7a;
+  color: var(--info-text);
+  border: 1px solid var(--info-border);
 }
 
 .warning-box-title {
@@ -210,7 +260,7 @@ button {
 }
 
 .slide-table tr.row-inferred td {
-  color: #ffd699;
+  color: var(--warn-text);
 }
 
 .slide-table tfoot td {
@@ -227,13 +277,13 @@ button {
 }
 
 .inferred-edit input {
-  width: 64px;
+  width: 84px;
   background: var(--bg-raised);
   border: 1px solid var(--warn);
   color: var(--text);
   border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 13px;
+  padding: 8px 10px;
+  font-size: 16px;
 }
 
 .inferred-tag {
@@ -306,6 +356,7 @@ button {
   background: var(--bg-raised);
   border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
+  touch-action: manipulation;
 }
 
 .toolbar-left,
@@ -318,7 +369,7 @@ button {
 
 .toolbar-slide-label {
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 15px;
   margin-left: 4px;
 }
 
@@ -331,16 +382,31 @@ button {
 .speed-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 10px;
+  font-size: 15px;
   color: var(--text-dim);
+}
+
+.speed-label input[type="range"] {
+  width: 150px;
+  height: 32px;
+  accent-color: var(--accent);
+}
+
+.toolbar-group .btn {
+  min-width: 52px;
+  padding-left: 14px;
+  padding-right: 14px;
 }
 
 .practice-body {
   flex: 1;
   display: grid;
-  grid-template-columns: 64px 1fr 220px;
-  grid-template-areas: "gutter reader stats";
+  grid-template-columns: 56px 1fr;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "gutter reader"
+    "stats stats";
   min-height: 0;
 }
 
@@ -359,26 +425,6 @@ button {
 @media (max-width: 800px) {
   .practice-body {
     grid-template-columns: 40px 1fr;
-    grid-template-rows: 1fr auto;
-    grid-template-areas:
-      "gutter reader"
-      "stats stats";
-  }
-  .stats-panel {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    border-left: none;
-    border-top: 1px solid var(--border);
-    padding: 10px 14px;
-    gap: 10px 20px;
-  }
-  .stats-panel .pace-indicator {
-    width: 100%;
-  }
-  .stat-row-divider {
-    border-top: none;
-    padding-top: 0;
   }
 }
 
@@ -503,19 +549,22 @@ button {
   left: 0;
   right: 0;
   pointer-events: none;
-  border-top: 1px solid rgba(94, 234, 212, 0.35);
-  border-bottom: 1px solid rgba(94, 234, 212, 0.35);
-  background: rgba(94, 234, 212, 0.04);
+  border-top: 1px solid var(--band-line);
+  border-bottom: 1px solid var(--band-line);
+  background: var(--band-fill);
 }
 
-/* ---------- Stats panel ---------- */
+/* ---------- Bottom bar (stats + controls) ---------- */
 
 .stats-panel {
-  border-left: 1px solid var(--border);
-  padding: 18px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-raised);
+  padding: 12px 20px;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 32px;
 }
 
 .stat-row {
@@ -524,30 +573,39 @@ button {
   gap: 2px;
 }
 
-.stat-row-divider {
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
+.transport {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  touch-action: manipulation;
+}
+
+.reader-viewport-seekable {
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--text-dim);
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 22px;
   font-variant-numeric: tabular-nums;
 }
 
 .paused-banner {
   background: var(--warn-dim);
-  color: #ffd699;
+  color: var(--warn-text);
   text-align: center;
   border-radius: 6px;
-  padding: 6px;
-  font-size: 13px;
+  padding: 8px 14px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -555,20 +613,20 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .pace-ahead {
   background: var(--warn-dim);
-  color: #ffd699;
+  color: var(--warn-text);
 }
 
 .pace-behind {
   background: var(--info-dim);
-  color: #bcd9ff;
+  color: var(--info-text);
 }
 
 .pace-onpace {

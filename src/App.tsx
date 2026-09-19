@@ -6,6 +6,7 @@ import { FreestylePractice } from "./screens/FreestylePractice";
 import { TimedPractice } from "./screens/TimedPractice";
 import { Summary } from "./screens/Summary";
 import { SettingsProvider } from "./settingsContext";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { loadPersisted, savePersisted } from "./storage";
 
 type Screen = "upload" | "mode-select" | "practice" | "summary";
@@ -45,7 +46,12 @@ export default function App() {
   }
 
   return (
-    <SettingsProvider initialFontSize={persisted.fontSize} initialMirrored={persisted.mirrored}>
+    <SettingsProvider
+      initialFontSize={persisted.fontSize}
+      initialMirrored={persisted.mirrored}
+      initialTheme={persisted.theme}
+    >
+      {screen !== "practice" && <ThemeToggle floating />}
       {screen === "upload" && (
         <UploadScreen initialText={persisted.markdownText} onDeckReady={handleDeckReady} />
       )}

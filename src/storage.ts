@@ -8,6 +8,8 @@ export interface PersistedState {
   mode: Mode | null;
   fontSize: number;
   mirrored: boolean;
+  /** null means follow the device's light/dark setting. */
+  theme: "light" | "dark" | null;
   /** Per-slide inferred-time overrides made in the upload/review screen, keyed by slide index. */
   timeOverrides: Record<number, number>;
 }
@@ -18,6 +20,7 @@ const DEFAULTS: PersistedState = {
   mode: null,
   fontSize: 32,
   mirrored: false,
+  theme: null,
   timeOverrides: {},
 };
 

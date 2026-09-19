@@ -106,21 +106,26 @@ function buildScrollAnchors(
 }
 
 /**
- * Content y offset for a slide `elapsedSeconds` into its `durationSeconds`. Timed holds keep their
- * stated seconds and spoken words share the rest, so pauses don't speed up or slow down the speech.
+ * Converts anchors to seconds for a slide of `durationSeconds`. Timed holds keep their stated
+ * seconds and spoken words share the rest, so pauses don't speed up or slow down the speech.
  */
+function anchorTimes(anchors: ScrollAnchor[], durationSeconds: number) {
+  const last = anchors[anchors.length - 1];
+  const wordSeconds = Math.max(durationSeconds - last.s, durationSeconds * MIN_WORD_TIME_SHARE);
+  const holdScale = last.s > 0 ? Math.min(1, (durationSeconds - wordSeconds) / last.s) : 1;
+  const secondsPerWord = last.w > 0 ? wordSeconds / last.w : 0;
+  return (a: ScrollAnchor) => a.s * holdScale + a.w * secondsPerWord;
+}
+
+/** Content y offset for a slide `elapsedSeconds` into its `durationSeconds`. */
 export function scrollYAtTime(
   anchors: ScrollAnchor[],
   elapsedSeconds: number,
   durationSeconds: number
 ): number {
-  const last = anchors[anchors.length - 1];
   if (durationSeconds <= 0) return anchors[0].y;
-  const wordSeconds = Math.max(durationSeconds - last.s, durationSeconds * MIN_WORD_TIME_SHARE);
-  const holdScale = last.s > 0 ? Math.min(1, (durationSeconds - wordSeconds) / last.s) : 1;
-  const secondsPerWord = last.w > 0 ? wordSeconds / last.w : 0;
-  const timeAt = (a: ScrollAnchor) => a.s * holdScale + a.w * secondsPerWord;
-
+  const timeAt = anchorTimes(anchors, durationSeconds);
+  const last = anchors[anchors.length - 1];
   const t = Math.min(Math.max(elapsedSeconds, 0), timeAt(last));
   for (let j = 1; j < anchors.length; j++) {
     const a = anchors[j - 1];
@@ -132,6 +137,21 @@ export function scrollYAtTime(
     }
   }
   return last.y;
+}
+
+/** Inverse of scrollYAtTime: seconds into the slide at which content offset `y` is reached. */
+export function timeAtScrollY(anchors: ScrollAnchor[], y: number, durationSeconds: number): number {
+  if (durationSeconds <= 0 || y <= anchors[0].y) return 0;
+  const timeAt = anchorTimes(anchors, durationSeconds);
+  for (let j = 1; j < anchors.length; j++) {
+    const a = anchors[j - 1];
+    const b = anchors[j];
+    if (y <= b.y) {
+      const ta = timeAt(a);
+      return b.y === a.y ? ta : ta + ((timeAt(b) - ta) * (y - a.y)) / (b.y - a.y);
+    }
+  }
+  return timeAt(anchors[anchors.length - 1]);
 }
 
 /**

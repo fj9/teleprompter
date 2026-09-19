@@ -3,11 +3,19 @@ import { useSettings } from "../settingsContext";
 
 export interface ShortcutHandlers {
   onTogglePause?: () => void;
+  onSeekBack?: () => void;
+  onSeekForward?: () => void;
   onRestart: () => void;
   onExit: () => void;
 }
 
-export function useKeyboardShortcuts({ onTogglePause, onRestart, onExit }: ShortcutHandlers) {
+export function useKeyboardShortcuts({
+  onTogglePause,
+  onSeekBack,
+  onSeekForward,
+  onRestart,
+  onExit,
+}: ShortcutHandlers) {
   const { increaseFontSize, decreaseFontSize } = useSettings();
 
   useEffect(() => {
@@ -19,6 +27,18 @@ export function useKeyboardShortcuts({ onTogglePause, onRestart, onExit }: Short
           if (onTogglePause) {
             e.preventDefault();
             onTogglePause();
+          }
+          break;
+        case "ArrowLeft":
+          if (onSeekBack) {
+            e.preventDefault();
+            onSeekBack();
+          }
+          break;
+        case "ArrowRight":
+          if (onSeekForward) {
+            e.preventDefault();
+            onSeekForward();
           }
           break;
         case "ArrowUp":
@@ -40,5 +60,5 @@ export function useKeyboardShortcuts({ onTogglePause, onRestart, onExit }: Short
     }
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [onTogglePause, onRestart, onExit, increaseFontSize, decreaseFontSize]);
+  }, [onTogglePause, onSeekBack, onSeekForward, onRestart, onExit, increaseFontSize, decreaseFontSize]);
 }

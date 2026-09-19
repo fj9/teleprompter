@@ -128,7 +128,7 @@ export function FreestylePractice({ deck, onComplete, onExit, onRestart }: Frees
             <span className="stat-label">Delta</span>
             <span className="stat-value">{formatDelta(delta)}</span>
           </div>
-          <div className="stat-row stat-row-divider">
+          <div className="stat-row">
             <span className="stat-label">Overall</span>
             <span className="stat-value">
               {formatClock(runningElapsed)} / {formatClock(runningTarget)}

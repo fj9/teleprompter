@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface TimedEngineState {
   currentIndex: number;
@@ -9,12 +9,17 @@ export interface TimedEngineState {
   done: boolean;
 }
 
+export interface TimedEngine extends TimedEngineState {
+  /** Jump to `seconds` into slide `index`; real per-slide time keeps counting as normal. */
+  seekTo: (index: number, seconds: number) => void;
+}
+
 export function useTimedEngine(
   slideDurations: number[],
   multiplier: number,
   paused: boolean,
   onComplete: () => void
-): TimedEngineState {
+): TimedEngine {
   const [state, setState] = useState<TimedEngineState>(() => ({
     currentIndex: 0,
     elapsedInSlide: 0,
@@ -70,5 +75,9 @@ export function useTimedEngine(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slideDurations]);
 
-  return state;
+  const seekTo = useCallback((index: number, seconds: number) => {
+    setState((prev) => (prev.done ? prev : { ...prev, currentIndex: index, elapsedInSlide: seconds }));
+  }, []);
+
+  return { ...state, seekTo };
 }
