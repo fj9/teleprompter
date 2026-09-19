@@ -1,4 +1,5 @@
 import type { Deck, ParseResult, ParseWarning, Slide } from "./types";
+import { stripStageDirections, totalHoldSeconds } from "./utils/stageDirections";
 
 const FALLBACK_WPM = 130;
 
@@ -10,7 +11,7 @@ export function formatDuration(totalSeconds: number): string {
 }
 
 function countWords(text: string): number {
-  const trimmed = text.trim();
+  const trimmed = stripStageDirections(text).trim();
   if (trimmed === "") return 0;
   return trimmed.split(/\s+/).length;
 }
@@ -145,6 +146,7 @@ export function parseDeck(raw: string, filename: string): ParseResult {
 
   const slides: Slide[] = rawSlides.map((rs, idx) => {
     const wordCount = countWords(rs.body);
+    const holdSeconds = totalHoldSeconds(rs.body);
     let targetSeconds: number;
     let targetIsInferred = false;
 
@@ -152,7 +154,7 @@ export function parseDeck(raw: string, filename: string): ParseResult {
       targetSeconds = rs.targetSeconds;
     } else {
       targetIsInferred = true;
-      targetSeconds = Math.round((wordCount / FALLBACK_WPM) * 60);
+      targetSeconds = Math.round((wordCount / FALLBACK_WPM) * 60 + holdSeconds);
       if (rs.invalidTimeRaw !== undefined) {
         warnings.push({
           type: "invalid-time",
@@ -175,6 +177,7 @@ export function parseDeck(raw: string, filename: string): ParseResult {
       title: rs.title,
       bodyText: rs.body,
       wordCount,
+      holdSeconds,
       targetSeconds,
       targetIsInferred,
     };

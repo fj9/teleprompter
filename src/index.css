@@ -493,6 +493,11 @@ button {
   margin: 0 0 0.8em;
 }
 
+.stage-direction {
+  font-size: 0.7em;
+  color: var(--text-dim);
+}
+
 .reader-band {
   position: absolute;
   left: 0;

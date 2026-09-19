@@ -3,11 +3,14 @@ import type { Deck, SlideActual } from "../types";
 import { Reader } from "../components/Reader";
 import { SlideGutter } from "../components/SlideGutter";
 import { Toolbar } from "../components/Toolbar";
-import { useSlideBounds } from "../hooks/useSlideBounds";
+import { scrollYAtTime, useSlideBounds } from "../hooks/useSlideBounds";
 import { useTimedEngine } from "../hooks/useTimedEngine";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useWakeLock } from "../hooks/useWakeLock";
 import { useSettings } from "../settingsContext";
 import { formatClock } from "../utils/format";
+
+const SCROLL_EASE_SECONDS = 0.3;
 
 interface TimedPracticeProps {
   deck: Deck;
@@ -19,6 +22,7 @@ interface TimedPracticeProps {
 export function TimedPractice({ deck, onComplete, onExit, onRestart }: TimedPracticeProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const easedScroll = useRef<{ pos: number; ts: number } | null>(null);
   const { fontSize, mirrored } = useSettings();
   const [multiplier, setMultiplier] = useState(1);
   const [paused, setPaused] = useState(false);
@@ -29,6 +33,7 @@ export function TimedPractice({ deck, onComplete, onExit, onRestart }: TimedPrac
 
   const engine = useTimedEngine(durations, multiplier, paused, () => setFinished(true));
 
+  useWakeLock();
   useKeyboardShortcuts({
     onTogglePause: () => setPaused((p) => !p),
     onRestart,
@@ -36,13 +41,22 @@ export function TimedPractice({ deck, onComplete, onExit, onRestart }: TimedPrac
   });
 
   useLayoutEffect(() => {
-    if (!bounds || !containerRef.current) return;
+    const container = containerRef.current;
+    if (!bounds || !container) return;
     const { currentIndex, elapsedInSlide } = engine;
-    const duration = durations[currentIndex] || 1;
-    const slideFraction = Math.min(1, elapsedInSlide / duration);
-    const target =
-      bounds.boundaryScrollTop[currentIndex] + slideFraction * bounds.slideHeights[currentIndex];
-    containerRef.current.scrollTop = target;
+    const y = scrollYAtTime(bounds.scrollAnchors[currentIndex], elapsedInSlide, durations[currentIndex]);
+    const target = Math.max(0, y - bounds.bandOffsetPx);
+
+    // Ease toward the target so speed changes (e.g. entering or leaving a hold) don't feel abrupt.
+    const now = performance.now();
+    const prev = easedScroll.current;
+    let pos = target;
+    if (prev && Math.abs(target - prev.pos) < container.clientHeight) {
+      const dt = Math.min((now - prev.ts) / 1000, 0.25);
+      pos = prev.pos + (target - prev.pos) * (1 - Math.exp(-dt / SCROLL_EASE_SECONDS));
+    }
+    easedScroll.current = { pos, ts: now };
+    container.scrollTop = pos;
   }, [bounds, engine, durations]);
 
   function buildActuals(): SlideActual[] {

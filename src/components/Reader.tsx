@@ -1,6 +1,34 @@
-import { MutableRefObject, UIEvent } from "react";
+import { Fragment, MutableRefObject, UIEvent, memo } from "react";
 import type { Deck } from "../types";
 import { BAND_FRACTION, BAND_HEIGHT_FRACTION } from "../hooks/useSlideBounds";
+import { parseHoldSeconds, splitStageDirections } from "../utils/stageDirections";
+
+// Memoized so the per-frame re-renders of the timed screen don't rebuild every word span.
+const SlideBody = memo(function SlideBody({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/\n{2,}/).map((para, pi) => (
+        <p key={pi}>
+          {splitStageDirections(para).map((seg, si) => (
+            <Fragment key={si}>
+              {seg.stage
+                ? <span className="stage-direction" data-hold={parseHoldSeconds(seg.text) ?? undefined}>{seg.text}</span>
+                : seg.text.split(/(\s+)/).map((tok, ti) =>
+                    tok === "" ? null : /^\s+$/.test(tok) ? (
+                      tok
+                    ) : (
+                      <span key={ti} data-word>
+                        {tok}
+                      </span>
+                    )
+                  )}
+            </Fragment>
+          ))}
+        </p>
+      ))}
+    </>
+  );
+});
 
 interface ReaderProps {
   deck: Deck;
@@ -46,9 +74,7 @@ export function Reader({
             data-slide-index={i}
           >
             {slide.title && <div className="reader-slide-title">{slide.title}</div>}
-            {slide.bodyText.split(/\n{2,}/).map((para, pi) => (
-              <p key={pi}>{para}</p>
-            ))}
+            <SlideBody text={slide.bodyText} />
           </div>
         ))}
         <div

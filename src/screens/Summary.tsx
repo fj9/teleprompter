@@ -54,7 +54,7 @@ export function Summary({ deck, actuals, onRestart, onNewFile, onChooseMode }: S
                 <td className={delta !== null ? (delta > 0 ? "delta-ahead" : delta < 0 ? "delta-behind" : "") : ""}>
                   {delta !== null ? formatDelta(delta) : "—"}
                 </td>
-                <td>{completed ? formatWpm(s.wordCount, a.actualSeconds) : "—"}</td>
+                <td>{completed ? formatWpm(s.wordCount, Math.max(1, a.actualSeconds - s.holdSeconds)) : "—"}</td>
               </tr>
             );
           })}

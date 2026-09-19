@@ -7,6 +7,7 @@ import { Toolbar } from "../components/Toolbar";
 import { useSlideBounds } from "../hooks/useSlideBounds";
 import { useFreestyleTimer } from "../hooks/useFreestyleTimer";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useWakeLock } from "../hooks/useWakeLock";
 import { useSettings } from "../settingsContext";
 import { formatClock, formatDelta } from "../utils/format";
 
@@ -26,6 +27,7 @@ export function FreestylePractice({ deck, onComplete, onExit, onRestart }: Frees
   const bounds = useSlideBounds(containerRef, slideRefs, deck.slides.length, [fontSize, mirrored]);
   const { state, onScrollTop, tickNow } = useFreestyleTimer(deck.slides.length);
 
+  useWakeLock();
   useKeyboardShortcuts({ onRestart, onExit });
 
   useEffect(() => {
