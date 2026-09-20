@@ -4,6 +4,7 @@ import { UploadScreen } from "./screens/UploadScreen";
 import { ModeSelect } from "./screens/ModeSelect";
 import { FreestylePractice } from "./screens/FreestylePractice";
 import { TimedPractice } from "./screens/TimedPractice";
+import { MemorizePractice } from "./screens/MemorizePractice";
 import { Summary } from "./screens/Summary";
 import { SettingsProvider } from "./settingsContext";
 import { ThemeToggle } from "./components/ThemeToggle";
@@ -75,6 +76,15 @@ export default function App() {
           key={practiceKey}
           deck={deck}
           onComplete={handleComplete}
+          onExit={handleExitToModeSelect}
+          onRestart={handleRestart}
+        />
+      )}
+
+      {screen === "practice" && deck && mode === "memorize" && (
+        <MemorizePractice
+          key={practiceKey}
+          deck={deck}
           onExit={handleExitToModeSelect}
           onRestart={handleRestart}
         />

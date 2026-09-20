@@ -31,7 +31,7 @@ export interface ParseResult {
   warnings: ParseWarning[];
 }
 
-export type Mode = "freestyle" | "timed";
+export type Mode = "freestyle" | "timed" | "memorize";
 
 export interface SlideActual {
   slideIndex: number;

@@ -29,6 +29,11 @@ export function ModeSelect({ deck, onChoose, onBack }: ModeSelectProps) {
           <p>The app auto-scrolls each slide at the speed needed to hit its target. Keeping up
             with the line is the pacing exercise.</p>
         </button>
+        <button className="mode-card" onClick={() => onChoose("memorize")}>
+          <h2>Memorize</h2>
+          <p>Learn it by heart. Words fade into gaps, then only the opening words of each
+            sentence, then blank. Tap a gap to check yourself.</p>
+        </button>
       </div>
     </div>
   );

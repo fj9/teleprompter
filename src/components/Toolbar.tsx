@@ -6,10 +6,18 @@ interface ToolbarProps {
   slideLabel: string;
   onRestart: () => void;
   onExit: () => void;
+  /** The mirror toggle only makes sense for screens that scroll a reader. */
+  showMirror?: boolean;
   children?: ReactNode;
 }
 
-export function Toolbar({ slideLabel, onRestart, onExit, children }: ToolbarProps) {
+export function Toolbar({
+  slideLabel,
+  onRestart,
+  onExit,
+  showMirror = true,
+  children,
+}: ToolbarProps) {
   const { mirrored, increaseFontSize, decreaseFontSize, toggleMirrored } = useSettings();
 
   return (
@@ -33,9 +41,11 @@ export function Toolbar({ slideLabel, onRestart, onExit, children }: ToolbarProp
             A+
           </button>
         </div>
-        <button className="btn" onClick={toggleMirrored} aria-pressed={mirrored}>
-          {mirrored ? "Unmirror" : "Mirror"}
-        </button>
+        {showMirror && (
+          <button className="btn" onClick={toggleMirrored} aria-pressed={mirrored}>
+            {mirrored ? "Unmirror" : "Mirror"}
+          </button>
+        )}
         <ThemeToggle />
       </div>
     </div>
